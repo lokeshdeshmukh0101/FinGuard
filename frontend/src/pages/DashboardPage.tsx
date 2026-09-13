@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Activity, ShieldAlert, DollarSign, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Activity, ShieldAlert, IndianRupee, AlertTriangle, CheckCircle } from 'lucide-react';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { api, type DashboardStats, type Transaction, type FraudAlert } from '../services/api';
 import { KpiCard } from '../components/KpiCard';
@@ -64,9 +64,9 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onOpenXai, onOpenI
         />
         <KpiCard
           title="Total Transaction Volume"
-          value={`$${kpis.total_value.toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
-          subtext="USD Gross Value"
-          icon={<DollarSign size={20} />}
+          value={`₹${kpis.total_value.toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
+          subtext="INR Gross Value"
+          icon={<IndianRupee size={20} />}
           color="var(--accent-cyan)"
         />
         <KpiCard
@@ -154,7 +154,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onOpenXai, onOpenI
               {recentTransactions.map((tx) => (
                 <tr key={tx.id}>
                   <td style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--accent-blue)' }}>{tx.id.substring(0, 8)}...</td>
-                  <td style={{ fontWeight: 700 }}>${tx.amount.toFixed(2)}</td>
+                  <td style={{ fontWeight: 700 }}>₹{tx.amount.toFixed(2)}</td>
                   <td>{tx.location}</td>
                   <td>
                     <span className={`badge badge-${tx.status === 'FLAGGED' ? 'high' : 'low'}`}>

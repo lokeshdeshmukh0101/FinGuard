@@ -115,7 +115,7 @@ export const TransactionsPage: React.FC<TransactionsPageProps> = ({ onOpenXai, o
                 transactions.map((tx) => (
                   <tr key={tx.id}>
                     <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, color: 'var(--accent-blue)' }}>{tx.id.substring(0, 13)}...</td>
-                    <td style={{ fontWeight: 700, color: 'var(--text-primary)' }}>${tx.amount.toFixed(2)}</td>
+                    <td style={{ fontWeight: 700, color: 'var(--text-primary)' }}>₹{tx.amount.toFixed(2)}</td>
                     <td>{tx.location}</td>
                     <td style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem' }}>{tx.device_id}</td>
                     <td style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{new Date(tx.transaction_time).toLocaleString()}</td>

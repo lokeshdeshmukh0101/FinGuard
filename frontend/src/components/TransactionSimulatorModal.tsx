@@ -74,17 +74,17 @@ export const TransactionSimulatorModal: React.FC<TransactionSimulatorModalProps>
                 type="button"
                 className="btn btn-secondary"
                 style={{ fontSize: '0.75rem', padding: '4px 8px' }}
-                onClick={() => { setAmount('85.00'); setLocation('New York, USA'); }}
+                onClick={() => { setAmount('85.00'); setLocation('Mumbai, India'); }}
               >
-                Normal Spending ($85)
+                Normal Spending (₹85)
               </button>
               <button
                 type="button"
                 className="btn btn-secondary"
                 style={{ fontSize: '0.75rem', padding: '4px 8px', color: 'var(--accent-amber)' }}
-                onClick={() => { setAmount('850.00'); setLocation('New York, USA'); }}
+                onClick={() => { setAmount('850.00'); setLocation('Mumbai, India'); }}
               >
-                High Amount Spike ($850)
+                High Amount Spike (₹850)
               </button>
               <button
                 type="button"
@@ -92,7 +92,7 @@ export const TransactionSimulatorModal: React.FC<TransactionSimulatorModalProps>
                 style={{ fontSize: '0.75rem', padding: '4px 8px', color: 'var(--accent-rose)' }}
                 onClick={() => { setAmount('3500.00'); setLocation('Tokyo, Japan'); setDeviceId('DEV-UNKNOWN-X'); }}
               >
-                High-Risk Fraud ($3,500 + Tokyo)
+                High-Risk Fraud (₹3,500 + Tokyo)
               </button>
             </div>
           </div>
@@ -102,7 +102,7 @@ export const TransactionSimulatorModal: React.FC<TransactionSimulatorModalProps>
             <select className="input-field" value={selectedCustomerId} onChange={(e) => setSelectedCustomerId(e.target.value)}>
               {customers.map(c => (
                 <option key={c.id} value={c.id}>
-                  {c.account_number} — Normal: {c.normal_location} (Avg: ${c.average_transaction_amount})
+                  {c.account_number} — Normal: {c.normal_location} (Avg: ₹{c.average_transaction_amount})
                 </option>
               ))}
             </select>
@@ -121,7 +121,7 @@ export const TransactionSimulatorModal: React.FC<TransactionSimulatorModalProps>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '16px' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '6px', fontWeight: 600 }}>AMOUNT ($ USD)</label>
+              <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '6px', fontWeight: 600 }}>AMOUNT (₹ INR)</label>
               <input className="input-field" type="number" step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} required />
             </div>
             <div>

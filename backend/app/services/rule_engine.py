@@ -76,10 +76,10 @@ class RuleEngine:
 
         if ratio >= self.config.amount_ratio_high:
             rule_score += self.config.amount_weight_high
-            reasons.append(f"Transaction amount (${amount:.2f}) is {ratio:.1f}x customer normal average (${avg_amt:.2f})")
+            reasons.append(f"Transaction amount (₹{amount:.2f}) is {ratio:.1f}x customer normal average (₹{avg_amt:.2f})")
         elif ratio >= self.config.amount_ratio_medium:
             rule_score += self.config.amount_weight_medium
-            reasons.append(f"Transaction amount (${amount:.2f}) is elevated ({ratio:.1f}x customer average)")
+            reasons.append(f"Transaction amount (₹{amount:.2f}) is elevated ({ratio:.1f}x customer average)")
 
         # 2. Velocity Rule (Sliding Window DSA)
         window_start = tx_time - timedelta(minutes=self.config.velocity_window_minutes)
