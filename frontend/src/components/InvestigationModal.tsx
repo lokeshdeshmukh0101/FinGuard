@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
-import { X, ShieldAlert, CheckCircle, AlertOctagon } from 'lucide-react';
-import { api } from '../services/api';
+import { X, ShieldAlert, CheckCircle, AlertOctagon, Lock } from 'lucide-react';
+import { api, type User } from '../services/api';
 
 interface InvestigationModalProps {
+  user?: User | null;
   transactionId: string | null;
   onClose: () => void;
   onSuccess: () => void;
 }
 
-export const InvestigationModal: React.FC<InvestigationModalProps> = ({ transactionId, onClose, onSuccess }) => {
+export const InvestigationModal: React.FC<InvestigationModalProps> = ({ user, transactionId, onClose, onSuccess }) => {
   const [decision, setDecision] = useState<'LEGITIMATE' | 'CONFIRMED_FRAUD' | 'UNDER_REVIEW'>('CONFIRMED_FRAUD');
   const [notes, setNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   if (!transactionId) return null;
+
+  const isCustomer = user?.role === 'CUSTOMER';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,75 +50,86 @@ export const InvestigationModal: React.FC<InvestigationModalProps> = ({ transact
           <button className="btn btn-secondary" style={{ padding: '6px' }} onClick={onClose}><X size={18} /></button>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '6px', fontWeight: 600 }}>TRANSACTION ID</label>
-            <input className="input-field" value={transactionId} disabled style={{ fontFamily: 'var(--font-mono)', opacity: 0.7 }} />
+        {isCustomer ? (
+          <div style={{ padding: '24px', textAlign: 'center', background: 'rgba(244, 63, 94, 0.08)', borderRadius: 'var(--radius-sm)', border: '1px solid rgba(244, 63, 94, 0.2)' }}>
+            <Lock size={36} color="var(--accent-rose)" style={{ marginBottom: '12px' }} />
+            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--accent-rose)', marginBottom: '8px' }}>Access Restricted (Role: CUSTOMER)</h3>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '18px' }}>
+              Fraud investigation decisions (marking transactions as Legitimate or Confirmed Fraud) are strictly restricted to authorized Fraud Analysts and System Administrators.
+            </p>
+            <button className="btn btn-secondary" onClick={onClose}>Close</button>
           </div>
+        ) : (
+          <form onSubmit={handleSubmit}>
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '6px', fontWeight: 600 }}>TRANSACTION ID</label>
+              <input className="input-field" value={transactionId} disabled style={{ fontFamily: 'var(--font-mono)', opacity: 0.7 }} />
+            </div>
 
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: 600 }}>ANALYST DECISION</label>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
-              <button
-                type="button"
-                className="btn"
-                style={{
-                  background: decision === 'CONFIRMED_FRAUD' ? 'rgba(244, 63, 94, 0.25)' : 'rgba(255,255,255,0.04)',
-                  border: `1px solid ${decision === 'CONFIRMED_FRAUD' ? 'var(--accent-rose)' : 'var(--border-color)'}`,
-                  color: decision === 'CONFIRMED_FRAUD' ? 'var(--accent-rose)' : 'var(--text-secondary)'
-                }}
-                onClick={() => setDecision('CONFIRMED_FRAUD')}
-              >
-                <AlertOctagon size={16} /> Confirmed Fraud
-              </button>
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: 600 }}>ANALYST DECISION</label>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
+                <button
+                  type="button"
+                  className="btn"
+                  style={{
+                    background: decision === 'CONFIRMED_FRAUD' ? 'rgba(244, 63, 94, 0.25)' : 'rgba(255,255,255,0.04)',
+                    border: `1px solid ${decision === 'CONFIRMED_FRAUD' ? 'var(--accent-rose)' : 'var(--border-color)'}`,
+                    color: decision === 'CONFIRMED_FRAUD' ? 'var(--accent-rose)' : 'var(--text-secondary)'
+                  }}
+                  onClick={() => setDecision('CONFIRMED_FRAUD')}
+                >
+                  <AlertOctagon size={16} /> Confirmed Fraud
+                </button>
 
-              <button
-                type="button"
-                className="btn"
-                style={{
-                  background: decision === 'LEGITIMATE' ? 'rgba(16, 185, 129, 0.25)' : 'rgba(255,255,255,0.04)',
-                  border: `1px solid ${decision === 'LEGITIMATE' ? 'var(--accent-green)' : 'var(--border-color)'}`,
-                  color: decision === 'LEGITIMATE' ? 'var(--accent-green)' : 'var(--text-secondary)'
-                }}
-                onClick={() => setDecision('LEGITIMATE')}
-              >
-                <CheckCircle size={16} /> Legitimate
-              </button>
+                <button
+                  type="button"
+                  className="btn"
+                  style={{
+                    background: decision === 'LEGITIMATE' ? 'rgba(16, 185, 129, 0.25)' : 'rgba(255,255,255,0.04)',
+                    border: `1px solid ${decision === 'LEGITIMATE' ? 'var(--accent-green)' : 'var(--border-color)'}`,
+                    color: decision === 'LEGITIMATE' ? 'var(--accent-green)' : 'var(--text-secondary)'
+                  }}
+                  onClick={() => setDecision('LEGITIMATE')}
+                >
+                  <CheckCircle size={16} /> Legitimate
+                </button>
 
-              <button
-                type="button"
-                className="btn"
-                style={{
-                  background: decision === 'UNDER_REVIEW' ? 'rgba(245, 158, 11, 0.25)' : 'rgba(255,255,255,0.04)',
-                  border: `1px solid ${decision === 'UNDER_REVIEW' ? 'var(--accent-amber)' : 'var(--border-color)'}`,
-                  color: decision === 'UNDER_REVIEW' ? 'var(--accent-amber)' : 'var(--text-secondary)'
-                }}
-                onClick={() => setDecision('UNDER_REVIEW')}
-              >
-                Under Review
+                <button
+                  type="button"
+                  className="btn"
+                  style={{
+                    background: decision === 'UNDER_REVIEW' ? 'rgba(245, 158, 11, 0.25)' : 'rgba(255,255,255,0.04)',
+                    border: `1px solid ${decision === 'UNDER_REVIEW' ? 'var(--accent-amber)' : 'var(--border-color)'}`,
+                    color: decision === 'UNDER_REVIEW' ? 'var(--accent-amber)' : 'var(--text-secondary)'
+                  }}
+                  onClick={() => setDecision('UNDER_REVIEW')}
+                >
+                  Under Review
+                </button>
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '24px' }}>
+              <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '6px', fontWeight: 600 }}>INVESTIGATION NOTES</label>
+              <textarea
+                className="input-field"
+                rows={4}
+                placeholder="Record details of customer verification, IP tracing, or merchant logs..."
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                required
+              />
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+              <button type="button" className="btn btn-secondary" onClick={onClose}>Cancel</button>
+              <button type="submit" className="btn btn-primary" disabled={submitting}>
+                {submitting ? 'Submitting...' : 'Save Decision'}
               </button>
             </div>
-          </div>
-
-          <div style={{ marginBottom: '24px' }}>
-            <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '6px', fontWeight: 600 }}>INVESTIGATION NOTES</label>
-            <textarea
-              className="input-field"
-              rows={4}
-              placeholder="Record details of customer verification, IP tracing, or merchant logs..."
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              required
-            />
-          </div>
-
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
-            <button type="button" className="btn btn-secondary" onClick={onClose}>Cancel</button>
-            <button type="submit" className="btn btn-primary" disabled={submitting}>
-              {submitting ? 'Submitting...' : 'Save Decision'}
-            </button>
-          </div>
-        </form>
+          </form>
+        )}
 
       </div>
     </div>

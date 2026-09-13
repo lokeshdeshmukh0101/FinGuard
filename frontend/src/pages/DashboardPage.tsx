@@ -4,12 +4,15 @@ import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveCo
 import { api, type DashboardStats, type Transaction, type FraudAlert } from '../services/api';
 import { KpiCard } from '../components/KpiCard';
 
+import { type User } from '../services/api';
+
 interface DashboardPageProps {
+  user: User | null;
   onOpenXai: (txId: string) => void;
   onOpenInvestigate: (txId: string) => void;
 }
 
-export const DashboardPage: React.FC<DashboardPageProps> = ({ onOpenXai, onOpenInvestigate }) => {
+export const DashboardPage: React.FC<DashboardPageProps> = ({ user, onOpenXai, onOpenInvestigate }) => {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [recentTransactions, setRecentTransactions] = useState<Transaction[]>([]);
   const [recentAlerts, setRecentAlerts] = useState<FraudAlert[]>([]);
@@ -22,14 +25,24 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onOpenXai, onOpenI
   const fetchDashboardData = async () => {
     setLoading(true);
     try {
-      const [statsRes, txRes, alertRes] = await Promise.all([
-        api.get('/dashboard/statistics'),
-        api.get('/transactions?limit=6'),
-        api.get('/alerts?limit=5')
-      ]);
-      setStats(statsRes.data);
-      setRecentTransactions(txRes.data);
-      setRecentAlerts(alertRes.data);
+      if (user?.role === 'CUSTOMER') {
+        const [statsRes, txRes] = await Promise.all([
+          api.get('/dashboard/statistics'),
+          api.get('/transactions?limit=6')
+        ]);
+        setStats(statsRes.data);
+        setRecentTransactions(txRes.data);
+        setRecentAlerts([]);
+      } else {
+        const [statsRes, txRes, alertRes] = await Promise.all([
+          api.get('/dashboard/statistics'),
+          api.get('/transactions?limit=6'),
+          api.get('/alerts?limit=5')
+        ]);
+        setStats(statsRes.data);
+        setRecentTransactions(txRes.data);
+        setRecentAlerts(alertRes.data);
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -42,14 +55,19 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onOpenXai, onOpenI
   }
 
   const kpis = stats.kpis;
+  const isCustomer = user?.role === 'CUSTOMER';
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 800 }}>Fraud Intelligence & Risk Executive Summary</h2>
-          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Real-time monitoring of transaction velocity, rule violations, and ML probability scores</p>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 800 }}>
+            {isCustomer ? 'Customer Account Summary & Risk Overview' : 'Fraud Intelligence & Risk Executive Summary'}
+          </h2>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+            {isCustomer ? 'Personal account transaction activity, spending baseline, and automated security indicators' : 'Real-time monitoring of transaction velocity, rule violations, and ML probability scores'}
+          </p>
         </div>
         <button className="btn btn-secondary" onClick={fetchDashboardData}>Refresh Data</button>
       </div>

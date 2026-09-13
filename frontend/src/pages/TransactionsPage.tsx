@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Search, Cpu, ShieldAlert } from 'lucide-react';
-import { api, type Transaction } from '../services/api';
+import { api, type Transaction, type User } from '../services/api';
 
 interface TransactionsPageProps {
+  user: User | null;
   onOpenXai: (txId: string) => void;
   onOpenInvestigate: (txId: string) => void;
 }
 
-export const TransactionsPage: React.FC<TransactionsPageProps> = ({ onOpenXai, onOpenInvestigate }) => {
+export const TransactionsPage: React.FC<TransactionsPageProps> = ({ user, onOpenXai, onOpenInvestigate }) => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -129,9 +130,11 @@ export const TransactionsPage: React.FC<TransactionsPageProps> = ({ onOpenXai, o
                         <button className="btn btn-secondary" style={{ padding: '4px 10px', fontSize: '0.75rem' }} onClick={() => onOpenXai(tx.id)}>
                           <Cpu size={14} /> Why Flagged?
                         </button>
-                        <button className="btn btn-primary" style={{ padding: '4px 10px', fontSize: '0.75rem' }} onClick={() => onOpenInvestigate(tx.id)}>
-                          <ShieldAlert size={14} /> Investigate
-                        </button>
+                        {user?.role !== 'CUSTOMER' && (
+                          <button className="btn btn-primary" style={{ padding: '4px 10px', fontSize: '0.75rem' }} onClick={() => onOpenInvestigate(tx.id)}>
+                            <ShieldAlert size={14} /> Investigate
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

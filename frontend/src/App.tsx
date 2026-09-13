@@ -73,12 +73,14 @@ export function App() {
       <main style={{ flex: 1, maxWidth: '1400px', width: '100%', margin: '0 auto', padding: '28px 24px' }}>
         {activeTab === 'dashboard' && (
           <DashboardPage
+            user={user}
             onOpenXai={(txId) => setXaiTxId(txId)}
             onOpenInvestigate={(txId) => setInvestigateTxId(txId)}
           />
         )}
         {activeTab === 'transactions' && (
           <TransactionsPage
+            user={user}
             onOpenXai={(txId) => setXaiTxId(txId)}
             onOpenInvestigate={(txId) => setInvestigateTxId(txId)}
           />
@@ -99,6 +101,7 @@ export function App() {
       />
 
       <InvestigationModal
+        user={user}
         transactionId={investigateTxId}
         onClose={() => setInvestigateTxId(null)}
         onSuccess={() => {
