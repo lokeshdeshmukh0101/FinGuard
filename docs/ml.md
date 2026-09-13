@@ -20,21 +20,21 @@ This report documents the machine learning pipeline used by FinGuard to detect f
 
 | Model | Accuracy | Precision | Recall | F1-Score | ROC-AUC |
 |---|---|---|---|---|---|
-| **Logistic Regression (Baseline)** | 0.9995 | 1.0000 | 0.9863 | 0.9931 | 1.0000 |
+| **Logistic Regression (Baseline)** | 0.9990 | 1.0000 | 0.9722 | 0.9859 | 1.0000 |
 | **Random Forest (Primary)** | **1.0000** | **1.0000** | **1.0000** | **1.0000** | **1.0000** |
 
 ## 4. Confusion Matrix (Random Forest)
-- True Negatives (Legitimate correctly identified): 1927
+- True Negatives (Legitimate correctly identified): 964
 - False Positives (False Alarms): 0
 - False Negatives (Missed Fraud): 0
-- True Positives (Fraud correctly detected): 73
+- True Positives (Fraud correctly detected): 36
 
 ## 5. Feature Importances
-- `amount_ratio`: 34.64%
-- `velocity_10m`: 24.57%
-- `location_distance_km`: 23.78%
-- `amount`: 8.52%
-- `is_new_device`: 5.85%
-- `merchant_risk_index`: 2.40%
-- `customer_avg_amount`: 0.21%
+- `amount_ratio`: 34.12%
+- `velocity_10m`: 25.89%
+- `location_distance_km`: 23.17%
+- `amount`: 8.58%
+- `is_new_device`: 4.33%
+- `merchant_risk_index`: 3.75%
+- `customer_avg_amount`: 0.11%
 - `hour`: 0.04%
